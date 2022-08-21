@@ -1,0 +1,37 @@
+server:
+  port: 3355
+
+spring:
+  application:
+    name: config-client
+  cloud:
+    config:
+      label: master  #分支名称
+      name: config  #配置文件名称
+      profile: dev  #读取后缀名称   上述三个综合http://localhost:3366/master/config-dev.yml
+      uri: http://localhost:3344  #配置中心的地址
+
+  #SpringCloud Bus动态刷新定点通知 公式：http://localhost:配置中心的端口号/actuator/bus-refresh/{destination}
+  #例如 只通知3355，curl -X POST "http://localhost:3344/actuator/bus-refresh/config-client:3355"
+  #rabbitmq相关配置,暴露bus刷新配置的端点
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+#服务注册到eureka地址
+eureka:
+  client:
+    service-url:
+      #设置与eureka server交互的地址查询服务和注册服务都需要依赖这个地址
+      defaultZone: http://localhost:7001/eureka #单机版
+
+# 暴露监控端点 否则 curl -X POST "http://localhost:3355/actuator/refresh" 不可使用
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+
+
